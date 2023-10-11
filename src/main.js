@@ -4,6 +4,7 @@ import "./assets/tailwind.css";
 import Amplify from "aws-amplify";
 import "@aws-amplify/ui-vue";
 import dotenv from "dotenv";
+import router from './router'
 dotenv.config();
 Amplify.configure({
   Auth: {
@@ -25,5 +26,6 @@ Amplify.configure(myAppConfig);
 Vue.config.productionTip = false;
 
 new Vue({
-  render: (h) => h(App),
+  router,
+  render: (h) => h(App)
 }).$mount("#app");
