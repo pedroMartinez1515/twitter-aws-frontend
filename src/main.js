@@ -5,6 +5,8 @@ import Amplify from "aws-amplify";
 import "@aws-amplify/ui-vue";
 import dotenv from "dotenv";
 import router from './router'
+import store from './store';
+
 dotenv.config();
 Amplify.configure({
   Auth: {
@@ -27,5 +29,6 @@ Vue.config.productionTip = false;
 
 new Vue({
   router,
+  store,
   render: (h) => h(App)
 }).$mount("#app");
