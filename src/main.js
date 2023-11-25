@@ -6,6 +6,7 @@ import "@aws-amplify/ui-vue";
 import dotenv from "dotenv";
 import router from './router'
 import store from './store';
+import directives from './directives'
 
 dotenv.config();
 Amplify.configure({
@@ -27,8 +28,10 @@ Amplify.configure(myAppConfig);
 
 Vue.config.productionTip = false;
 
+Vue.use(directives);
+
 new Vue({
   router,
   store,
-  render: (h) => h(App)
+  render: h => h(App)
 }).$mount("#app");
