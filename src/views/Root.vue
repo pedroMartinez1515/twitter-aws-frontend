@@ -257,10 +257,29 @@
               <a class="text-blue" href="#">Cookie Use</a>.
             </p>
             <button
+            @click="signMeUp"
               class="w-full rounded-full mt-4 py-3 bg-blue text-white font-bold hover:bg-dark"
             >
               Sign Up
             </button>
+          </div>
+        </div>
+
+        <div v-if="showModal === 'step5'"> 
+          <div class="pl-1 pr-4 py-1 h-12">
+            <button @click="confirmUserSignUp" class="rounded-full bg-blue font-bold text-white mt-2 p-1 pl-3 pr-3 relative right-0 float-right hover:bg-darkblue" :class="`${!verificationCode ? 'opacity-50 cursor-not-allowed': ''}`">Next</button>
+            <i class="flex justify-center fab fa-twitter text-blue text-2xl mt-2 mb-8"></i>
+          </div>
+          <div class="pt-5 px-8">
+            <div class="flex justify-between items-center pb-4">
+              <p class="text-2xl font-bold">We sent you a code</p>
+            </div>
+            <p class="text-dark mb-2">Enter it below to verify {{email}}.</p>
+            <div class="w-full bg-lightblue border-b-2 border-dark p-2">
+              <p class="leading-tight text-dark">Verification code</p>
+              <input v-model="verificationCode" class="w-full bg-lightblue text-lg" type="text">
+            </div>
+            <button @click="resendVerificationCode" class="text-blue pl-2 hover:underline">Didn't receive an email?</button>
           </div>
         </div>
       </div>
@@ -280,6 +299,7 @@ export default {
       birthdate: "",
       password: "",
       revealPassword: false,
+      verificationCode: '',
     };
   },
   computed: {
@@ -291,7 +311,13 @@ export default {
       this.$router.push("LogIn");
     },
     ...mapActions("signup", ["setSignupStep"]),
-    ...mapActions("authentication", ["signUp"]),
+    ...mapActions("authentication", [
+      "signUp",
+      "confirmSignUp",
+      "signInUser",
+      'resendSignUp',
+      'logoutUser'
+      ]),
     async signMeUp(){
       try{
         await this.signUp({
@@ -303,6 +329,43 @@ export default {
       }catch(error){
         alert('Error signing up, please check console for error detail');
         console.log('error signing up:', error)
+      }
+    },
+    async confirmUserSignUp(){
+      if(!this.verificationCode) return;
+      try{
+        await this.confirmSignUp({
+          email: this.email,
+          verificationCode: this.verificationCode
+        })
+        await this.signIn();
+      }catch(error){
+        alert('Error confirming verification code, please check console for error detail')
+        console.log('error confirming verification code:', error)
+      }
+    },
+    async signIn(){
+      try{
+        await this.signInUser({
+          email: this.email,
+          password: this.password,
+        })
+      }catch(error){
+        this.logoutUser();
+        alert('Error signing in, please check console for error detail')
+        console.log('error signing in:', error)
+      }
+    },
+
+    async resendVerificationCode(){
+      try{
+        await this.resendSignUp({
+          email: this.email,
+        });
+        console.log('code resent succesfully. ')
+      }catch(error){
+        alert('Error resending verification code, please check console for error detail')
+        console.log('error resending verification code:', error)
       }
     },
     setSignUpStep(step) {
